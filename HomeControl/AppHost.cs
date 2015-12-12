@@ -1,4 +1,6 @@
-﻿using HomeControl.Services;
+﻿using HomeControl.Data;
+using HomeControl.Data.Interfaces;
+using HomeControl.Services;
 using Ninject;
 using Serilog;
 using ServiceStack;
@@ -23,6 +25,7 @@ namespace HomeControl
             var logger = CreateLogger();
             kernel.Bind<IHelloService>().To<HelloService>();
             kernel.Bind<ILogger>().ToConstant(logger);
+            kernel.Bind<IDatabaseContextFactory>().To<DatabaseContextFactory>();
         }
 
         private ILogger CreateLogger()
