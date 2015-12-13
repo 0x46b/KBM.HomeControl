@@ -1,7 +1,7 @@
 ﻿using JetBrains.Annotations;
 using ServiceStack;
 
-namespace HomeControl.Services
+namespace HomeControl.Services.Requests
 {
     [Route("/hello/{Name}")]
     [UsedImplicitly]

@@ -2,7 +2,11 @@
 
 namespace HomeControl.Services
 {
-    class AuthenticationService : Service
+    internal interface IAuthenticationService
+    {
+    }
+
+    class AuthenticationService : Service, IAuthenticationService
     {
     }
 }

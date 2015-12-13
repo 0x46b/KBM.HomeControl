@@ -113,6 +113,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppHost.cs" />
+    <Compile Include="DatabaseServices\IUserDatabaseService.cs" />
+    <Compile Include="DatabaseServices\UserDatabaseService.cs" />
+    <Compile Include="DatabaseServices\UserNotFoundException.cs" />
     <Compile Include="Data\DatabaseContext.cs" />
     <Compile Include="Data\DatabaseContextFactory.cs" />
     <Compile Include="Data\Interfaces\IDatabaseContextFactory.cs" />
