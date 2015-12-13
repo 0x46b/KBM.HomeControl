@@ -1,7 +1,10 @@
-﻿namespace HomeControl
+﻿using JetBrains.Annotations;
+
+namespace HomeControl
 {
     using System;
 
+    [UsedImplicitly]
     class Program
     {
         static void Main(string[] args)

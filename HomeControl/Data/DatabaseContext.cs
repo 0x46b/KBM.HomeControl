@@ -1,4 +1,6 @@
-﻿namespace HomeControl.Data
+﻿using JetBrains.Annotations;
+
+namespace HomeControl.Data
 {
     using System.Data.Entity;
 
@@ -8,6 +10,7 @@
         {
         }
 
+        [UsedImplicitly]
         public DbSet<User> Users { get; set; }
     }
 

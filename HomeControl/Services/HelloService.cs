@@ -1,24 +1,16 @@
-﻿using HomeControl.Data.Interfaces;
+﻿using System.Threading.Tasks;
+using HomeControl.Data.Interfaces;
+using HomeControl.Services.Responses;
+using JetBrains.Annotations;
 using Serilog;
 using ServiceStack;
 
 namespace HomeControl.Services
 {
-    [Route("/hello/{Name}")]
-    public class Hello
-    {
-        public string Name { get; set; }
-    }
-
-    public class HelloResponse
-    {
-        public string Result { get; set; }
-    }
-
     public class HelloService : Service, IHelloService
     {
-        private IDatabaseContextFactory _dbContextFactory;
-        private ILogger _logger;
+        private readonly IDatabaseContextFactory _dbContextFactory;
+        private readonly ILogger _logger;
 
         public HelloService(ILogger logger, IDatabaseContextFactory dbContextFactory)
         {
@@ -28,11 +20,11 @@ namespace HomeControl.Services
 
         public object Any(Hello request)
         {
-            _logger.Debug($"Sending response");
+            _logger.Debug("Sending response");
             return new HelloResponse { Result = "Hello, " + request.Name };
         }
 
-        public object Get(AddHelloRequest request)
+        public async Task<AddHelloResponse> Get(AddHelloRequest request)
         {
             using(var context = _dbContextFactory.GetContext())
             {
@@ -40,8 +32,8 @@ namespace HomeControl.Services
                 newUser.Forename = request.Forename;
                 newUser.Surname = request.Surname;
                 context.Users.Add(newUser);
-                context.SaveChanges();
-                return new AddHelloResponse(newUser);
+                await context.SaveChangesAsync();
+                return new AddHelloResponse(newUser.Id);
             }
             
         }
@@ -49,6 +41,7 @@ namespace HomeControl.Services
 
     public interface IHelloService
     {
+        [UsedImplicitly]
         object Any(Hello request);
     }
 }

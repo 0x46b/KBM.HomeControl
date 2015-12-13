@@ -5,21 +5,21 @@ namespace HomeControl
 {
     public class NinjectIocAdapter : IContainerAdapter
     {
-        private readonly IKernel kernel;
+        private readonly IKernel _kernel;
 
         public NinjectIocAdapter(IKernel kernel)
         {
-            this.kernel = kernel;
+            _kernel = kernel;
         }
 
         public T Resolve<T>()
         {
-            return kernel.Get<T>();
+            return _kernel.Get<T>();
         }
 
         public T TryResolve<T>()
         {
-            return kernel.CanResolve<T>() ? kernel.Get<T>() : default(T);
+            return _kernel.CanResolve<T>() ? _kernel.Get<T>() : default(T);
         }
     }
 }
