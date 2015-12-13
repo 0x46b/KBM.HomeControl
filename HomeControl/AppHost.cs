@@ -1,7 +1,9 @@
 ﻿using HomeControl.Data;
 using HomeControl.Data.Interfaces;
+using HomeControl.DatabaseServices;
 using HomeControl.Services;
 using Ninject;
+using Ninject.Activation;
 using Serilog;
 using ServiceStack;
 
@@ -22,15 +24,28 @@ namespace HomeControl
 
         private void RegisterServices(IKernel kernel)
         {
-            var logger = CreateLogger();
+            InitializeLogging();
             kernel.Bind<IHelloService>().To<HelloService>();
-            kernel.Bind<ILogger>().ToConstant(logger);
+            kernel.Bind<ILogger>().ToMethod(CreateContextLogger);
+            kernel.Bind<IUserDatabaseService>().To<UserDatabaseService>();
+            kernel.Bind<IAuthenticationService>().To<AuthenticationService>();
             kernel.Bind<IDatabaseContextFactory>().To<DatabaseContextFactory>();
         }
 
-        private ILogger CreateLogger()
+        private ILogger CreateContextLogger(IContext context)
         {
-            return new LoggerConfiguration().MinimumLevel.Debug().WriteTo.ColoredConsole().CreateLogger();
+            var requestingType = context.Request?.ParentRequest?.ParentRequest?.Target?.Member?.DeclaringType;
+            if (requestingType == null)
+            {
+                return Log.Logger;
+            }
+
+            return Log.Logger.ForContext(requestingType);
+        }
+
+        private void InitializeLogging()
+        {
+            Log.Logger =  new LoggerConfiguration().MinimumLevel.Debug().WriteTo.ColoredConsole().CreateLogger();
         }
     }
 }

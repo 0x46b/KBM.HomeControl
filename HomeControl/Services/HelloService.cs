@@ -1,54 +1,56 @@
-﻿using HomeControl.Data.Interfaces;
+﻿using System;
+using System.Threading.Tasks;
+using HomeControl.DatabaseServices;
+using HomeControl.Services.Requests;
+using HomeControl.Services.Responses;
+using JetBrains.Annotations;
 using Serilog;
 using ServiceStack;
 
 namespace HomeControl.Services
 {
-    [Route("/hello/{Name}")]
-    public class Hello
-    {
-        public string Name { get; set; }
-    }
-
-    public class HelloResponse
-    {
-        public string Result { get; set; }
-    }
-
     public class HelloService : Service, IHelloService
     {
-        private IDatabaseContextFactory _dbContextFactory;
-        private ILogger _logger;
+        private readonly IUserDatabaseService _userDatabaseService;
+        private readonly ILogger _logger;
 
-        public HelloService(ILogger logger, IDatabaseContextFactory dbContextFactory)
+        public HelloService(ILogger logger, IUserDatabaseService userDatabaseService)
         {
             _logger = logger;
-            _dbContextFactory = dbContextFactory;
+            _userDatabaseService = userDatabaseService;
+            var byteArray = new byte[]
+            {
+                0xBA,
+                0xDB,
+                0xAB,
+                0xE0,
+            };
+            var test = Convert.ToBase64String(byteArray);
+            _logger.Error(test);
         }
 
         public object Any(Hello request)
         {
-            _logger.Debug($"Sending response");
+            _logger.Debug("Sending response");
             return new HelloResponse { Result = "Hello, " + request.Name };
         }
 
-        public object Get(AddHelloRequest request)
+        public async Task<AddHelloResponse> Get(AddHelloRequest request)
         {
-            using(var context = _dbContextFactory.GetContext())
-            {
-                var newUser = context.Users.Create();
-                newUser.Forename = request.Forename;
-                newUser.Surname = request.Surname;
-                context.Users.Add(newUser);
-                context.SaveChanges();
-                return new AddHelloResponse(newUser);
-            }
-            
+            var parsedRFIDId = ConvertToByte(request.RFIDId);
+            var id = await _userDatabaseService.AddUserAsync(request.Forename, request.Surname, parsedRFIDId);
+            return new AddHelloResponse(id);
+        }
+
+        private byte[] ConvertToByte(string rfidId)
+        {
+            return Convert.FromBase64String(rfidId);
         }
     }
 
     public interface IHelloService
     {
+        [UsedImplicitly]
         object Any(Hello request);
     }
 }

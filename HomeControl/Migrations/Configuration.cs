@@ -1,11 +1,11 @@
+using JetBrains.Annotations;
+
 namespace HomeControl.Migrations
 {
-    using System;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
-    using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<HomeControl.Data.DatabaseContext>
+    [UsedImplicitly]
+    internal sealed class Configuration : DbMigrationsConfiguration<Data.DatabaseContext>
     {
         public Configuration()
         {
