@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HomeControl.Data;
 using HomeControl.Data.Interfaces;
-using Serilog;
+using Ninject.Extensions.Logging;
 
 namespace HomeControl.DatabaseServices
 {
@@ -12,10 +12,10 @@ namespace HomeControl.DatabaseServices
         private readonly IDatabaseContextFactory _databaseContextFactory;
         private readonly ILogger _logger;
 
-        public UserDatabaseService(IDatabaseContextFactory databaseContextFactory, ILogger logger)
+        public UserDatabaseService(IDatabaseContextFactory databaseContextFactory, ILoggerFactory loggerFactory)
         {
             _databaseContextFactory = databaseContextFactory;
-            _logger = logger;
+            _logger = loggerFactory.GetCurrentClassLogger();
         }
 
         public async Task<int> AddUserAsync(User user)
@@ -29,7 +29,7 @@ namespace HomeControl.DatabaseServices
                 context.Users.Add(newUser);
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
-                _logger.Information($"Added user with id {newUser.Id}");
+                _logger.Info($"Added user with id {newUser.Id}");
                 return newUser.Id;
             }
         }
@@ -56,7 +56,7 @@ namespace HomeControl.DatabaseServices
                 }
                 context.Users.Remove(savedUser);
                 await context.SaveChangesAsync().ConfigureAwait(false);
-                _logger.Information($"Removed user with id {savedUser.Id}");
+                _logger.Info($"Removed user with id {savedUser.Id}");
             }
         }
 
@@ -78,7 +78,7 @@ namespace HomeControl.DatabaseServices
                 savedUser.Surname = user.Surname;
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
-                _logger.Information($"Updated user with id {savedUser.Id}");
+                _logger.Info($"Updated user with id {savedUser.Id}");
                 return savedUser.Id;
             }
         }
