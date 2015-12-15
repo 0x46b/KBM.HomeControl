@@ -1,11 +1,12 @@
-﻿using JetBrains.Annotations;
+﻿using HomeControl.Services.Responses;
+using JetBrains.Annotations;
 using ServiceStack;
 
 namespace HomeControl.Services.Requests
 {
-    [Route("/hello/add/{Forename}/{Surname}/{RFIDId}")]
+    [Route("/user/add/")]
     [UsedImplicitly]
-    public class AddHelloRequest
+    public class AddUser : IReturn<AddUserResponse>
     {
         [UsedImplicitly]
         public string Forename { get; set; }

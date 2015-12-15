@@ -5,6 +5,7 @@ using HomeControl.LoggingAdapter;
 using HomeControl.Services;
 using Ninject;
 using Ninject.Activation;
+using Ninject.Extensions.Logging.Serilog;
 using Serilog;
 using ServiceStack;
 using ServiceStack.Auth;
@@ -16,7 +17,7 @@ namespace HomeControl
     public class AppHost : AppSelfHostBase
     {
         public AppHost()
-          : base("HttpListener Self-Host", typeof(HelloService).Assembly)
+          : base("HttpListener Self-Host", typeof(UserService).Assembly)
         { }
 
         public override void Configure(Funq.Container container)
@@ -44,13 +45,13 @@ namespace HomeControl
         private void RegisterServices(IKernel kernel)
         {
             InitializeLogging();
-            kernel.Bind<IHelloService>().To<HelloService>();
-            kernel.Bind<ILogger>().ToMethod(CreateContextLogger);
+            kernel.Bind<IHelloService>().To<UserService>();
+            //kernel.Bind<ILogger>().ToMethod(CreateContextLogger);
             kernel.Bind<IUserDatabaseService>().To<UserDatabaseService>();
             kernel.Bind<IAuthenticationService>().To<AuthenticationService>();
             kernel.Bind<IDatabaseContextFactory>().To<DatabaseContextFactory>();
-            kernel.Bind<ILogFactory>().To<SerilogFactory>();
-            kernel.Bind<ILog>().To<SeriLogAdapter>();
+            kernel.Bind<ILogFactory>().To<LoggingAdapterFactory>();
+            kernel.Bind<ILog>().To<LoggingAdapter.LoggingAdapter>();
         }
 
         private ILogger CreateContextLogger(IContext context)

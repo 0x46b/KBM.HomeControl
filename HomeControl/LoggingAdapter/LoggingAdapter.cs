@@ -1,19 +1,23 @@
 ﻿using System;
-using System.Text;
 using JetBrains.Annotations;
-using Serilog;
+using Ninject.Extensions.Logging;
 using ServiceStack.Logging;
 
 namespace HomeControl.LoggingAdapter
 {
     [UsedImplicitly]
-    class SeriLogAdapter : ILog
+    class LoggingAdapter : ILog
     {
         private readonly ILogger _logger;
 
-        public SeriLogAdapter(ILogger logger)
+        public LoggingAdapter(ILoggerFactory loggerFactory, Type type)
         {
-            _logger = logger;
+            _logger = loggerFactory.GetLogger(type);
+        }
+
+        public LoggingAdapter(ILoggerFactory loggerFactory, string typeName)
+        {
+            _logger = loggerFactory.GetLogger(typeName);
         }
 
         public bool IsDebugEnabled => true;
@@ -25,17 +29,9 @@ namespace HomeControl.LoggingAdapter
 
         public void Debug(object message, Exception exception)
         {
-            _logger.Debug(message.ToString(), GetFormattedException(exception));
+            _logger.DebugException(message.ToString(), exception);
         }
-
-        private string GetFormattedException(Exception exception)
-        {
-            var stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"Exceptiontype: {exception.GetType()}");
-            stringBuilder.AppendLine($"Message: {exception.Message}");
-            return stringBuilder.ToString();
-        }
-
+        
         public void DebugFormat(string format, params object[] args)
         {
             _logger.Debug(format, args);
@@ -48,7 +44,7 @@ namespace HomeControl.LoggingAdapter
 
         public void Error(object message, Exception exception)
         {
-            _logger.Error(message.ToString(), GetFormattedException(exception));
+            _logger.ErrorException(message.ToString(), exception);
         }
 
         public void ErrorFormat(string format, params object[] args)
@@ -63,7 +59,7 @@ namespace HomeControl.LoggingAdapter
 
         public void Fatal(object message, Exception exception)
         {
-            _logger.Fatal(message.ToString(), GetFormattedException(exception));
+            _logger.FatalException(message.ToString(), exception);
         }
 
         public void FatalFormat(string format, params object[] args)
@@ -73,32 +69,32 @@ namespace HomeControl.LoggingAdapter
 
         public void Info(object message)
         {
-            _logger.Information(message.ToString());
+            _logger.Info(message.ToString());
         }
 
         public void Info(object message, Exception exception)
         {
-            _logger.Information(message.ToString(), GetFormattedException(exception));
+            _logger.InfoException(message.ToString(), exception);
         }
 
         public void InfoFormat(string format, params object[] args)
         {
-            _logger.Information(format, args);
+            _logger.Info(format, args);
         }
 
         public void Warn(object message)
         {
-            _logger.Warning(message.ToString());
+            _logger.Warn(message.ToString());
         }
 
         public void Warn(object message, Exception exception)
         {
-            _logger.Warning(message.ToString(), GetFormattedException(exception));
+            _logger.WarnException(message.ToString(), exception);
         }
 
         public void WarnFormat(string format, params object[] args)
         {
-            _logger.Warning(format, args);
+            _logger.Warn(format, args);
         }
     }
 }

@@ -2,12 +2,12 @@
 
 namespace HomeControl.Services.Responses
 {
-    public class AddHelloResponse
+    public class AddUserResponse
     {
         [UsedImplicitly]
         public int Id { get; set; }
         
-        public AddHelloResponse(int id)
+        public AddUserResponse(int id)
         {
             Id = id;
         }

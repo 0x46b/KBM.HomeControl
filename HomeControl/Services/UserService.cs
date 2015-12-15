@@ -9,24 +9,15 @@ using ServiceStack;
 
 namespace HomeControl.Services
 {
-    public class HelloService : Service, IHelloService
+    public class UserService : Service, IHelloService
     {
         private readonly IUserDatabaseService _userDatabaseService;
         private readonly ILogger _logger;
 
-        public HelloService(ILogger logger, IUserDatabaseService userDatabaseService)
+        public UserService(ILogger logger, IUserDatabaseService userDatabaseService)
         {
             _logger = logger;
             _userDatabaseService = userDatabaseService;
-            var byteArray = new byte[]
-            {
-                0xBA,
-                0xDB,
-                0xAB,
-                0xE0,
-            };
-            var test = Convert.ToBase64String(byteArray);
-            _logger.Error(test);
         }
 
         public object Any(Hello request)
@@ -35,11 +26,11 @@ namespace HomeControl.Services
             return new HelloResponse { Result = "Hello, " + request.Name };
         }
 
-        public async Task<AddHelloResponse> Get(AddHelloRequest request)
+        public async Task<AddUserResponse> Get(AddUser request)
         {
             var parsedRFIDId = ConvertToByte(request.RFIDId);
             var id = await _userDatabaseService.AddUserAsync(request.Forename, request.Surname, parsedRFIDId);
-            return new AddHelloResponse(id);
+            return new AddUserResponse(id);
         }
 
         private byte[] ConvertToByte(string rfidId)
