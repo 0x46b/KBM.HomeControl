@@ -30,8 +30,8 @@ namespace HomeControl
 
             Plugins.Add(new AuthFeature(() => new AuthUserSession(),
                     new IAuthProvider[] {
-                    new BasicAuthProvider(), //Sign-in with HTTP Basic Auth
-                    new CredentialsAuthProvider(), //HTML Form post of UserName/Password credentials
+                    new BasicAuthProvider(), 
+                    new CredentialsAuthProvider(),
                   }));
 
             Plugins.Add(new RegistrationFeature());
