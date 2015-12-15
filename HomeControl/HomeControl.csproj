@@ -121,6 +121,8 @@
     <Compile Include="Data\Interfaces\IDatabaseContextFactory.cs" />
     <Compile Include="Data\Interfaces\IDatabaseEntity.cs" />
     <Compile Include="Data\User.cs" />
+    <Compile Include="LoggingAdapter\SeriLogAdapter.cs" />
+    <Compile Include="LoggingAdapter\SerilogFactory.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="NinjectAdapter.cs" />
     <Compile Include="Program.cs" />
