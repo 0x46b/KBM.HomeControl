@@ -125,11 +125,12 @@
     <Compile Include="NinjectAdapter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\UserService\Requests\AddUser.cs" />
-    <Compile Include="Services\UserService\Responses\AddUserResponse.cs" />
-    <Compile Include="Services\UserService\Requests\Hello.cs" />
-    <Compile Include="Services\UserService\Responses\HelloResponse.cs" />
-    <Compile Include="Services\UserService\UserService.cs" />
+    <Compile Include="Services\Requests\AddHelloRequest.cs" />
+    <Compile Include="Services\Responses\AddHelloResponse.cs" />
+    <Compile Include="Services\AuthenticationService.cs" />
+    <Compile Include="Services\Requests\Hello.cs" />
+    <Compile Include="Services\Responses\HelloResponse.cs" />
+    <Compile Include="Services\HelloService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

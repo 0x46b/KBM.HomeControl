@@ -26,7 +26,6 @@ namespace HomeControl.DatabaseServices
                 newUser.Forename = user.Forename;
                 newUser.Surname = user.Surname;
                 newUser.RFIDId = user.RFIDId;
-                newUser.IsAuthorized = user.IsAuthorized;
                 context.Users.Add(newUser);
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
@@ -35,14 +34,13 @@ namespace HomeControl.DatabaseServices
             }
         }
 
-        public async Task<int> AddUserAsync(string forename, string surname, byte[] RFIDId, bool isAuthorized)
+        public async Task<int> AddUserAsync(string forename, string surname, byte[] RFIDId)
         {
             var userToAdd = new User
             {
                 Forename = forename,
                 Surname = surname,
-                RFIDId = RFIDId,
-                IsAuthorized = isAuthorized
+                RFIDId = RFIDId
             };
             return await AddUserAsync(userToAdd).ConfigureAwait(false);
         }
@@ -70,7 +68,7 @@ namespace HomeControl.DatabaseServices
             }
             using (var context = _databaseContextFactory.GetContext())
             {
-                var savedUser = await context.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
+                var savedUser = context.Users.FirstOrDefault(u => u.Id == user.Id);
                 if (savedUser == null)
                 {
                     throw new UserNotFoundException($"User with id {user.Id} not found");
@@ -82,25 +80,6 @@ namespace HomeControl.DatabaseServices
                 await context.SaveChangesAsync().ConfigureAwait(false);
                 _logger.Information($"Updated user with id {savedUser.Id}");
                 return savedUser.Id;
-            }
-        }
-
-        public async Task<bool> IsAuthorized(int userId)
-        {
-            if (userId < 0)
-            {
-                throw new UserNotFoundException($"User with id {userId} not found");
-            }
-            using (var context = _databaseContextFactory.GetContext())
-            {
-                var savedUser = await context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-                if (savedUser == null)
-                {
-                    throw new UserNotFoundException($"User with id {userId} not found");
-                }
-                
-                _logger.Information($"Authorization-query for user with id {savedUser.Id}: {savedUser.IsAuthorized}");
-                return savedUser.IsAuthorized;
             }
         }
     }
