@@ -4,6 +4,7 @@ using HomeControl.Data.Interfaces;
 using HomeControl.DatabaseServices;
 using HomeControl.LoggingAdapter;
 using HomeControl.Services;
+using HomeControl.Services.Interfaces;
 using Ninject;
 using Serilog;
 using ServiceStack;
@@ -51,7 +52,7 @@ namespace HomeControl
 
         private void RegisterServices(IKernel kernel)
         {
-            kernel.Bind<IHelloService>().To<UserService>();
+            kernel.Bind<IUserService>().To<UserService>();
             kernel.Bind<IUserDatabaseService>().To<UserDatabaseService>();
             kernel.Bind<IAuthenticationService>().To<AuthenticationService>();
             kernel.Bind<IDatabaseContextFactory>().To<DatabaseContextFactory>();

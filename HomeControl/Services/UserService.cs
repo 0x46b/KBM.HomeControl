@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
 using HomeControl.DatabaseServices;
+using HomeControl.Services.Interfaces;
 using HomeControl.Services.Requests;
 using HomeControl.Services.Responses;
-using JetBrains.Annotations;
 using Ninject.Extensions.Logging;
 using ServiceStack;
 
 namespace HomeControl.Services
 {
-    public class UserService : Service, IHelloService
+    public class UserService : Service, IUserService
     {
         private readonly IUserDatabaseService _userDatabaseService;
         private readonly ILogger _logger;
@@ -20,7 +20,7 @@ namespace HomeControl.Services
             _userDatabaseService = userDatabaseService;
         }
 
-        public object Any(Hello request)
+        public object Get(Hello request)
         {
             var result = $"Hello, {request.Name}, nice to meet you! :D";
             _logger.Debug($"Sending response: {result}");
@@ -38,11 +38,5 @@ namespace HomeControl.Services
         {
             return Convert.FromBase64String(rfidId);
         }
-    }
-
-    public interface IHelloService
-    {
-        [UsedImplicitly]
-        object Any(Hello request);
     }
 }

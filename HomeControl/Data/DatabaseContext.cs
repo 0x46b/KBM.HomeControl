@@ -1,4 +1,4 @@
-﻿using JetBrains.Annotations;
+﻿using HomeControl.Data.Entities;
 
 namespace HomeControl.Data
 {
@@ -10,8 +10,9 @@ namespace HomeControl.Data
         {
         }
 
-        [UsedImplicitly]
         public DbSet<User> Users { get; set; }
+
+        public DbSet<Permission> Permissions { get; set; }
     }
 
 }
