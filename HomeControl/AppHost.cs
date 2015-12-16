@@ -1,10 +1,11 @@
-﻿using HomeControl.Data;
+﻿using Funq;
+using HomeControl.Data;
 using HomeControl.Data.Interfaces;
 using HomeControl.DatabaseServices;
 using HomeControl.LoggingAdapter;
 using HomeControl.Services;
+using HomeControl.Services.Interfaces;
 using Ninject;
-using Ninject.Activation;
 using Serilog;
 using ServiceStack;
 using ServiceStack.Auth;
@@ -16,23 +17,31 @@ namespace HomeControl
     public class AppHost : AppSelfHostBase
     {
         public AppHost()
-          : base("HttpListener Self-Host", typeof(HelloService).Assembly)
+          : base("HttpListener Self-Host", typeof(UserService).Assembly)
         { }
 
-        public override void Configure(Funq.Container container)
+        public override void Configure(Container container)
         {
-            IKernel kernel = new StandardKernel();
+            InitializeLogging();
+
+            var kernel = new StandardKernel();
             RegisterServices(kernel);
 
             container.Adapter = new NinjectIocAdapter(kernel);
 
             LogManager.LogFactory = container.Resolve<ILogFactory>();
 
+            InitializeAuthorization(container);
+        }
+
+        private void InitializeAuthorization(Container container)
+        {
             Plugins.Add(new AuthFeature(() => new AuthUserSession(),
-                    new IAuthProvider[] {
-                    new BasicAuthProvider(), 
+                new IAuthProvider[]
+                {
+                    new BasicAuthProvider(),
                     new CredentialsAuthProvider(),
-                  }));
+                }));
 
             Plugins.Add(new RegistrationFeature());
 
@@ -43,25 +52,21 @@ namespace HomeControl
 
         private void RegisterServices(IKernel kernel)
         {
-            InitializeLogging();
-            kernel.Bind<IHelloService>().To<HelloService>();
-            kernel.Bind<ILogger>().ToMethod(CreateContextLogger);
+            kernel.Bind<IUserService>().To<UserService>();
             kernel.Bind<IUserDatabaseService>().To<UserDatabaseService>();
             kernel.Bind<IAuthenticationService>().To<AuthenticationService>();
             kernel.Bind<IDatabaseContextFactory>().To<DatabaseContextFactory>();
-            kernel.Bind<ILogFactory>().To<SerilogFactory>();
-            kernel.Bind<ILog>().To<SeriLogAdapter>();
-        }
-
-        private ILogger CreateContextLogger(IContext context)
-        {
-            var requestingType = context.Request?.ParentRequest?.ParentRequest?.Target?.Member?.DeclaringType;
-            return requestingType == null ? Log.Logger : Log.Logger.ForContext(requestingType);
+            kernel.Bind<ILogFactory>().To<LoggingAdapterFactory>();
+            kernel.Bind<ILog>().To<LoggingAdapter.LoggingAdapter>();
         }
 
         private void InitializeLogging()
         {
-            Log.Logger =  new LoggerConfiguration().MinimumLevel.Debug().WriteTo.ColoredConsole().CreateLogger();
+            Log.Logger =  new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.ColoredConsole()
+                .ReadFrom.AppSettings()
+                .CreateLogger();
         }
     }
 }

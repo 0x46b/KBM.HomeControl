@@ -1,14 +1,14 @@
-﻿using HomeControl.Data.Interfaces;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
-namespace HomeControl.Data
+namespace HomeControl.Data.Entities
 {
     [UsedImplicitly]
-    public class User : IDatabaseEntity
+    public class User : DatabaseEntity
     {
-        public int Id { get; set; }
         public string Forename { get; set; }
+
         public string Surname { get; set; }
+
         [UsedImplicitly]
         public byte[] RFIDId { get; set; }
     }
